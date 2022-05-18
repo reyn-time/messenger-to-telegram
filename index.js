@@ -1,11 +1,13 @@
 import express from "express";
 import bodyParser from "body-parser";
 import morgan from "morgan";
+import helmet from "helmet";
 import "dotenv/config";
 
 const app = express().use(bodyParser.json());
 
 app.use(morgan("combined"));
+app.use(helmet());
 
 app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 
