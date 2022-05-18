@@ -8,10 +8,12 @@ Install dependencies
 npm install
 ```
 
+Change the verify token in `.env` to a random string.
+
 ## Run server
 
 ```
-node index.js
+./index.js
 ```
 
 ## Test
