@@ -8,9 +8,9 @@ app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 app.post("/webhook", ({ body }, res) => {
   // Checks this is an event from a page subscription
   if (body.object === "page") {
-    // Iterates over each entry - there may be multiple if batched
+    // Logs all message in the batch
     body.entry.forEach((entry) => {
-      // Retrieves
+      // entry.messaging is an array of one element only.
       const event = entry.messaging[0];
       console.log(event);
     });
@@ -18,5 +18,20 @@ app.post("/webhook", ({ body }, res) => {
     res.status(200).send("EVENT_RECEIVED");
   } else {
     res.sendStatus(404);
+  }
+});
+
+app.get("/webhook", (req, res) => {
+  const VERIFY_TOKEN = "<YOUR_VERIFY_TOKEN>";
+
+  const mode = req.query["hub.mode"];
+  const token = req.query["hub.verify_token"];
+  const challenge = req.query["hub.challenge"];
+
+  // If provided token matches our verify token, respond with the provided challenge token
+  if (mode === "subscribe" && token === VERIFY_TOKEN) {
+    res.status(200).send(challenge);
+  } else {
+    res.sendStatus(403);
   }
 });
