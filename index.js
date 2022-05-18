@@ -1,7 +1,10 @@
 import express from "express";
 import bodyParser from "body-parser";
+import morgan from "morgan";
 
 const app = express().use(bodyParser.json());
+
+app.use(morgan("combined"));
 
 app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
 
