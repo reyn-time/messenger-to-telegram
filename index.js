@@ -5,6 +5,7 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import helmet from "helmet";
 import "dotenv/config";
+import axios from "axios";
 
 const app = express().use(bodyParser.json());
 
@@ -23,6 +24,20 @@ app.post("/webhook", ({ body }, res) => {
       const event = entry.messaging[0];
       console.log(event);
     });
+
+    axios
+      .get(
+        `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
+        {
+          params: {
+            chat_id: process.env.CHAT_ID,
+            text: "Inbox 📪",
+          },
+        }
+      )
+      .catch((error) => {
+        console.log(error);
+      });
 
     res.status(200).send("EVENT_RECEIVED");
   } else {
