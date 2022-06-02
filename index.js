@@ -11,7 +11,8 @@ const app = express().use(bodyParser.json());
 app.use(morgan("combined"));
 app.use(helmet());
 
-app.listen(process.env.PORT || 1337, () => console.log("webhook is listening"));
+const port = process.env.PORT || 1337;
+app.listen(port, () => console.log(`webhook is listening at port ${port}`));
 
 app.post("/webhook", ({ body }, res) => {
   // Checks this is an event from a page subscription
