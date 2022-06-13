@@ -5,7 +5,9 @@ import bodyParser from "body-parser";
 import morgan from "morgan";
 import helmet from "helmet";
 import "dotenv/config";
-import axios from "axios";
+
+import sendTelegramMessage from "./telegram.js";
+import sendFacebookMessage from "./messenger.js";
 
 const app = express().use(bodyParser.json());
 
@@ -16,28 +18,23 @@ const port = process.env.PORT || 1337;
 app.listen(port, () => console.log(`webhook is listening at port ${port}`));
 
 app.post("/webhook", ({ body }, res) => {
+  console.log(body);
+
   // Checks this is an event from a page subscription
   if (body.object === "page") {
     // Logs all message in the batch
     body.entry.forEach((entry) => {
       // entry.messaging is an array of one element only.
       const event = entry.messaging[0];
-      console.log(event);
-    });
+      const senderText = event.message.text ?? "";
+      const senderId = event.sender.id;
 
-    axios
-      .get(
-        `https://api.telegram.org/bot${process.env.TELEGRAM_BOT_TOKEN}/sendMessage`,
-        {
-          params: {
-            chat_id: process.env.CHAT_ID,
-            text: "Inbox 📪",
-          },
-        }
-      )
-      .catch((error) => {
-        console.log(error);
-      });
+      sendTelegramMessage(senderText);
+      sendFacebookMessage(
+        senderId,
+        "Our team is notified. Please wait for assistance. 已通知團隊。請稍等。"
+      );
+    });
 
     res.status(200).send("EVENT_RECEIVED");
   } else {

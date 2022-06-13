@@ -4,7 +4,7 @@ WORKDIR /database
 COPY package*.json ./
 RUN npm install
 COPY .env .env
-COPY index.js index.js
+COPY src src
 EXPOSE 3003
 
-CMD ["./index.js"]
+CMD ["./src/index.js"]
