@@ -7,7 +7,7 @@ import helmet from "helmet";
 import "dotenv/config";
 
 import sendTelegramMessage from "./telegram.js";
-import sendFacebookMessage from "./messenger.js";
+import getFacebookName from "./messenger.js";
 
 const app = express().use(bodyParser.json());
 
@@ -26,14 +26,12 @@ app.post("/webhook", ({ body }, res) => {
     body.entry.forEach((entry) => {
       // entry.messaging is an array of one element only.
       const event = entry.messaging[0];
-      const senderText = event.message.text ?? "";
+      const senderText = event.message.text || "🌄";
       const senderId = event.sender.id;
 
-      sendTelegramMessage(senderText);
-      sendFacebookMessage(
-        senderId,
-        "Our team is notified. Please wait for assistance. 已通知團隊。請稍等。"
-      );
+      getFacebookName(senderId).then((senderName) => {
+        sendTelegramMessage(senderName, senderText);
+      });
     });
 
     res.status(200).send("EVENT_RECEIVED");

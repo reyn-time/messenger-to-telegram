@@ -1,19 +1,18 @@
 import axios from "axios";
 
-const sendFacebookMessage = (senderId, text) => {
-  axios
-    .post(
-      "https://graph.facebook.com/v2.6/me/messages",
+const getFacebookName = async (senderId) => {
+  try {
+    const response = await axios.get(
+      `https://graph.facebook.com/${senderId}?fields=name`,
       {
-        messaging_type: "RESPONSE",
-        recipient: { id: senderId },
-        message: { text },
-      },
-      { params: { access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN } }
-    )
-    .catch((error) => {
-      console.log(error);
-    });
+        params: { access_token: process.env.FACEBOOK_PAGE_ACCESS_TOKEN },
+      }
+    );
+    console.log(response.data);
+    return response.data?.name ?? "Unknown";
+  } catch {
+    return "Unknown";
+  }
 };
 
-export default sendFacebookMessage;
+export default getFacebookName;
